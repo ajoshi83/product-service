@@ -1,2 +1,2 @@
-# product-svc
+# product-service
 Product Service
