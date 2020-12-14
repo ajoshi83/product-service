@@ -19,14 +19,17 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * Implementation of ProductService
  * @author Amol Joshi
  */
 
 @Service
 @Slf4j
 public class ProductServiceImpl implements ProductService {
+    /* The ProductMapper to map entity to dto and vice versa */
     private final ProductMapper productMapper;
-    private ProductRepository productRepository;
+    /* Repository to handle ORM operations */
+    private final ProductRepository productRepository;
     @Value("${products.default.pageSize}")
     private int maxPageSize;
     @Value("${products.default.sort.field.name}")
