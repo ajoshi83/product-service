@@ -1,0 +1,69 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.7.RELEASE'
+	id 'java'
+	id 'application'
+	id 'com.diffplug.gradle.spotless' version '3.24.0'
+	id 'com.palantir.docker' version '0.22.1'
+	id 'org.sonarqube' version '2.7.1'
+	id 'io.franzbecker.gradle-lombok' version '3.1.0'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.poc'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.1.Final'
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	compileOnly 'org.projectlombok:lombok'
+	compileOnly 'org.mapstruct:mapstruct:1.4.1.Final'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.powermock:powermock-module-junit4:2.0.2'
+	testImplementation 'org.powermock:powermock-api-mockito2:2.0.2'
+
+	runtimeOnly "mysql:mysql-connector-java"
+}
+
+jar {
+	mainClassName = "com.poc.productservice.ProductServiceApplication"
+	baseName = project.name
+	version = project.version
+}
+
+bootJar {
+	baseName = project.name
+	version = project.version
+}
+
+docker {
+	name "${bootJar.baseName}:${project.version}"
+	tags "latest"
+	if( project.version.endsWith('-SNAPSHOT')) {
+		docker.tags "latest-snapshot"
+	} else {
+		docker.tags "latest"
+	}
+	dockerfile file('Dockerfile')
+	files bootJar,'src/main/resources/bootstrap.yaml'
+	buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
+}
+
+docker.dependsOn build
+tasks.distZip.enabled = false
+tasks.distTar.enabled = false
+tasks.dockerfileZip.enabled = false
+tasks.docker.finalizedBy(dockerTag)
