@@ -33,7 +33,7 @@ This is a product service poc.  Service use Spring Boot, MySql, Docker container
 
 ## Where to see API documentation?
 1. Check what profile you are using to run service.  Service's http port changes according to profile as configured in 'application.properties'.
-2. Visit 'http://localhost:<port>/swagger-ui.htm' 
+2. Visit 'http://localhost:8080/swagger-ui.htm' 
 3. Follow the API documentation
 
 ## Dockerize the service and run service in docker container
